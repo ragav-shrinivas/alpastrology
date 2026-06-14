@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ===================================================================
+   ALP Astrology — Design System (Tailwind v4)
+   "Golden sunrise meeting cosmic sky" · spiritual · luxury · cinematic
+   =================================================================== */
+
+@theme {
+  /* ---- Brand colors: warm gold · soft yellow · sunrise · sky · indigo ---- */
+  --color-primary: #e8b54a; /* warm gold */
+  --color-primary-50: #fbf3df;
+  --color-primary-100: #f6e6bd;
+  --color-primary-300: #f2d488;
+  --color-primary-500: #e8b54a;
+  --color-primary-600: #d29a2e;
+  --color-primary-700: #a9781f;
+
+  --color-sunrise: #f4a259; /* sunrise orange (soft, not fire) */
+  --color-soft: #ffe9ad; /* soft yellow */
+
+  --color-secondary: #6aa7e0; /* sky blue */
+  --color-secondary-500: #6aa7e0;
+  --color-secondary-700: #3f6fa6;
+
+  --color-accent: #ffe2a0; /* soft golden yellow */
+  --color-accent-300: #fff0c9;
+  --color-accent-500: #ffe2a0;
+
+  --color-indigo-deep: #1a1746;
+
+  --color-background: #070a1c; /* deep cosmic indigo night */
+  --color-surface: #0e1330;
+  --color-surface-2: #161c3d;
+  --color-border: #262d54;
+  --color-foreground: #ffffff;
+  --color-muted: #aab2d6;
+
+  /* ---- Typography ---- */
+  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-cinzel: var(--font-cinzel), serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Radii ---- */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* ---- Motion ---- */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- Shadows / glow (gold + sky) ---- */
+  --shadow-glow: 0 0 44px -8px rgba(232, 181, 74, 0.5);
+  --shadow-glow-sky: 0 0 44px -8px rgba(106, 167, 224, 0.45);
+
+  /* ---- Keyframes ---- */
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-spin-slower: spin 120s linear infinite;
+  --animate-pulse-glow: pulse-glow 5s ease-in-out infinite;
+  --animate-breathe: breathe 8s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
+  --animate-accordion-down: accordion-down 0.3s var(--ease-out-soft);
+  --animate-accordion-up: accordion-up 0.3s var(--ease-out-soft);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 14px rgba(232, 181, 74, 0.45)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 34px rgba(255, 226, 160, 0.8)); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+/* ===================================================================
+   Base
+   =================================================================== */
+@layer base {
+  :root { color-scheme: dark; }
+
+  * { border-color: var(--color-border); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+
+  ::selection {
+    background: var(--color-primary);
+    color: #1a1430;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-background); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--color-primary), var(--color-secondary));
+    border-radius: 9999px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===================================================================
+   Utilities / components
+   =================================================================== */
+@layer utilities {
+  .font-cinzel { font-family: var(--font-cinzel); }
+
+  .text-gradient {
+    background: linear-gradient(
+      105deg,
+      var(--color-soft) 0%,
+      var(--color-primary) 40%,
+      var(--color-sunrise) 70%,
+      var(--color-secondary) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .text-gold {
+    background: linear-gradient(120deg, var(--color-soft), var(--color-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Sunrise-meets-sky atmospheric glow */
+  .bg-radial-glow {
+    background:
+      radial-gradient(60% 50% at 50% 110%, rgba(244, 162, 89, 0.18) 0%, transparent 70%),
+      radial-gradient(50% 45% at 15% 10%, rgba(106, 167, 224, 0.14) 0%, transparent 70%),
+      radial-gradient(45% 40% at 85% 0%, rgba(232, 181, 74, 0.14) 0%, transparent 70%);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.045);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .glass-gold {
+    background: linear-gradient(
+      160deg,
+      rgba(255, 226, 160, 0.08),
+      rgba(106, 167, 224, 0.05)
+    );
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(232, 181, 74, 0.18);
+  }
+
+  .card-glow {
+    transition:
+      transform 0.4s var(--ease-out-soft),
+      box-shadow 0.4s var(--ease-out-soft),
+      border-color 0.4s var(--ease-out-soft);
+  }
+  .card-glow:hover {
+    box-shadow: var(--shadow-glow);
+    border-color: rgba(232, 181, 74, 0.55);
+  }
+
+  /* Shimmering sweep used by premium buttons */
+  .shimmer {
+    background-image: linear-gradient(
+      110deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  .container-px { padding-inline: 1.25rem; }
+  @media (min-width: 768px) { .container-px { padding-inline: 2rem; } }
+  @media (min-width: 1280px) { .container-px { padding-inline: 4rem; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
