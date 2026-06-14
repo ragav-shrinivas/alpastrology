@@ -1,0 +1,13 @@
+-- 0010_article_bodies.sql
+-- Full article bodies for all 87 original ALP Astrology articles.
+-- The titles (verbatim) and complete HTML bodies were extracted from the
+-- original site's article pages (articles_view.php?art_id=N) and bulk-loaded
+-- into the `blogs` table (slugs article-12 .. article-99).
+--
+-- Because the bodies are large Tamil HTML (~1.2 MB total), the data lives in
+-- supabase/data/articles.json and is loaded with scripts/load-articles.mjs:
+--   SUPABASE_SERVICE_ROLE_KEY=xxx node scripts/load-articles.mjs
+--
+-- Already applied to the live project (87 rows, each with title, excerpt and
+-- full HTML content). This file documents the step for reproducibility.
+select 1;
