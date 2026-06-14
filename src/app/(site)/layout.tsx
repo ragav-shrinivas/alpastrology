@@ -4,6 +4,7 @@ import { WhatsappFab } from "@/components/layout/whatsapp-fab";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { CosmicBackground } from "@/components/three/cosmic-background";
 import { FloatingZodiac } from "@/components/zodiac/floating-zodiac";
+import { EditorRoot } from "@/components/editor/editor-root";
 import { getSettings } from "@/lib/cms/content";
 
 type NavItem = { label: string; href: string };
@@ -39,7 +40,9 @@ export default async function SiteLayout({
         address={settings.get("contact.address", "") || undefined}
       />
       <Navbar items={navItems} logoText={logoText} logoUrl={logoUrl || undefined} />
-      <main className="flex-1 pt-16 md:pt-20">{children}</main>
+      <EditorRoot>
+        <main className="flex-1 pt-16 md:pt-20">{children}</main>
+      </EditorRoot>
       <WhatsappFab number={whatsapp || undefined} />
       <Footer
         logoText={logoText}

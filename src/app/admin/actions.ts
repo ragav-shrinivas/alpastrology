@@ -104,6 +104,64 @@ export async function updateSection(
   return { ok: true };
 }
 
+/** Set a nested path (e.g. "title", "paragraphs.0", "buttons.1.label") inside
+ *  a section's JSON content. Used by the inline visual editor. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function setPath(obj: any, path: string[], value: unknown) {
+  let cur: any = obj;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    const idx: any = /^\d+$/.test(key) ? Number(key) : key;
+    let nextNode: any = cur[idx];
+    if (nextNode === undefined || nextNode === null || typeof nextNode !== "object") {
+      nextNode = /^\d+$/.test(path[i + 1]) ? [] : {};
+      cur[idx] = nextNode;
+    }
+    cur = nextNode;
+  }
+  const last = path[path.length - 1];
+  cur[/^\d+$/.test(last) ? Number(last) : last] = value;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+export async function saveSectionField(id: string, path: string, value: Json) {
+  const supabase = await staffClient();
+  const { data: sec } = await supabase
+    .from("sections")
+    .select("content")
+    .eq("id", id)
+    .maybeSingle();
+  if (!sec) return { ok: false, error: "Section not found" };
+  const content = (
+    sec.content && typeof sec.content === "object" && !Array.isArray(sec.content)
+      ? { ...(sec.content as Record<string, unknown>) }
+      : {}
+  ) as Record<string, unknown>;
+  setPath(content, path.split("."), value);
+  const { error } = await supabase
+    .from("sections")
+    .update({ content: content as Json })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidateAll();
+  return { ok: true };
+}
+
+/** Update a single column on a collection row (courses, faq, testimonials, …). */
+export async function saveCollectionField(
+  table: TableName,
+  id: string,
+  column: string,
+  value: unknown,
+) {
+  const supabase = await staffClient();
+  const from: AnyBuilder = supabase.from(table);
+  const { error } = await from.update({ [column]: value }).eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidateAll();
+  return { ok: true };
+}
+
 export async function duplicateSection(id: string) {
   const supabase = await staffClient();
   const { data: original } = await supabase

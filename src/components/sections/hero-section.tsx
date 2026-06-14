@@ -11,13 +11,16 @@ import {
 } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { EditableText } from "@/components/editor/editable-text";
 
 type Btn = { label: string; href: string; variant?: "primary" | "secondary" };
 
 export function HeroSection({
   content,
+  sectionId,
 }: {
   content: { title?: string; subtitle?: string; buttons?: Btn[] };
+  sectionId: string;
 }) {
   const buttons = content.buttons ?? [];
   const ref = useRef<HTMLElement>(null);
@@ -110,7 +113,13 @@ export function HeroSection({
           transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          <span className="text-gradient">{content.title}</span>
+          <EditableText
+            as="span"
+            className="text-gradient"
+            sectionId={sectionId}
+            path="title"
+            value={content.title ?? ""}
+          />
         </motion.h1>
 
         {content.subtitle && (
@@ -120,7 +129,12 @@ export function HeroSection({
             transition={{ duration: 0.9, delay: 0.4 }}
             className="text-muted mx-auto mt-6 max-w-2xl text-base text-pretty md:text-lg"
           >
-            {content.subtitle}
+            <EditableText
+              as="span"
+              sectionId={sectionId}
+              path="subtitle"
+              value={content.subtitle}
+            />
           </motion.p>
         )}
 

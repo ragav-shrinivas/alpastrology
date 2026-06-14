@@ -1,4 +1,5 @@
 import type { Section } from "@/types/database";
+import { SectionFrame } from "@/components/editor/section-frame";
 import { HeroSection } from "./hero-section";
 import {
   PageHeaderSection,
@@ -23,31 +24,32 @@ import { ZodiacJourney } from "@/components/zodiac/zodiac-journey";
 
 type Content = Record<string, unknown>;
 
-/** Maps a stored section `type` to its renderer. Unknown types are skipped. */
-function renderSection(type: string, content: Content) {
+/** Maps a stored section `type` to its renderer. Unknown types are skipped.
+ *  `sectionId` is threaded so inline editing can save back to the right row. */
+function renderSection(type: string, content: Content, sectionId: string) {
   switch (type) {
     case "hero":
-      return <HeroSection content={content} />;
+      return <HeroSection content={content} sectionId={sectionId} />;
     case "zodiac_journey":
       return <ZodiacJourney content={content} />;
     case "page_header":
-      return <PageHeaderSection content={content} />;
+      return <PageHeaderSection content={content} sectionId={sectionId} />;
     case "who_we_are":
-      return <WhoWeAreSection content={content} />;
+      return <WhoWeAreSection content={content} sectionId={sectionId} />;
     case "about_alp":
-      return <AboutAlpSection content={content} />;
+      return <AboutAlpSection content={content} sectionId={sectionId} />;
     case "mission":
-      return <MissionSection content={content} />;
+      return <MissionSection content={content} sectionId={sectionId} />;
     case "consultation":
-      return <ConsultationSection content={content} />;
+      return <ConsultationSection content={content} sectionId={sectionId} />;
     case "video":
-      return <VideoSection content={content} />;
+      return <VideoSection content={content} sectionId={sectionId} />;
     case "founder":
-      return <FounderSection content={content} />;
+      return <FounderSection content={content} sectionId={sectionId} />;
     case "legal":
-      return <LegalSection content={content} />;
+      return <LegalSection content={content} sectionId={sectionId} />;
     case "cta":
-      return <CtaSection content={content} />;
+      return <CtaSection content={content} sectionId={sectionId} />;
     case "services":
       return <ServicesSection content={content} />;
     case "courses":
@@ -66,12 +68,18 @@ function renderSection(type: string, content: Content) {
 }
 
 export function SectionRenderer({ sections }: { sections: Section[] }) {
+  const ids = sections.map((s) => s.id);
   return (
     <>
       {sections.map((s) => (
-        <div key={s.id}>
-          {renderSection(s.type, (s.content ?? {}) as Content)}
-        </div>
+        <SectionFrame
+          key={s.id}
+          sectionId={s.id}
+          isVisible={s.is_visible}
+          siblingIds={ids}
+        >
+          {renderSection(s.type, (s.content ?? {}) as Content, s.id)}
+        </SectionFrame>
       ))}
     </>
   );

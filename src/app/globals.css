@@ -218,3 +218,31 @@
     }
   }
 }
+
+/* ---------- Visual editor (Edit Mode) ---------- */
+.alp-editable {
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+  border-radius: 4px;
+  transition: outline-color .15s ease, background-color .15s ease;
+}
+body.alp-editing .alp-editable {
+  cursor: text;
+}
+body.alp-editing .alp-editable:hover {
+  outline-color: rgba(232, 181, 74, .55);
+  background-color: rgba(232, 181, 74, .06);
+}
+body.alp-editing .alp-editable:focus,
+body.alp-editing .alp-editable[contenteditable="true"]:focus-visible {
+  outline: 2px solid rgba(232, 181, 74, .9);
+  background-color: rgba(232, 181, 74, .10);
+}
+body.alp-editing [data-alp-section] {
+  position: relative;
+  outline: 1px solid transparent;
+  transition: outline-color .15s ease;
+}
+body.alp-editing [data-alp-section]:hover {
+  outline-color: rgba(106, 167, 224, .5);
+}
