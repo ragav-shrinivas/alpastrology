@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { WhatsappFab } from "@/components/layout/whatsapp-fab";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { CosmicBackground } from "@/components/three/cosmic-background";
+import { FloatingZodiac } from "@/components/zodiac/floating-zodiac";
 import { getSettings } from "@/lib/cms/content";
 
 type NavItem = { label: string; href: string };
@@ -24,6 +25,7 @@ export default async function SiteLayout({
   return (
     <>
       <CosmicBackground />
+      <FloatingZodiac />
       <OrganizationJsonLd
         name={settings.get("site.title", "ALP Astrology")}
         description={settings.get("meta.description", "")}
