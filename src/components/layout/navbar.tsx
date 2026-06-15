@@ -57,7 +57,7 @@ export function Navbar({
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-1 lg:flex lg:ml-8">
+        <ul className="hidden items-center gap-1 xl:flex xl:ml-6">
           {items.map((item) => {
             const active =
               item.href === "/"
@@ -68,7 +68,7 @@ export function Navbar({
                 <Link
                   href={item.href}
                   className={cn(
-                    "relative rounded-full px-4 py-2 text-sm transition-colors",
+                    "relative rounded-full px-3 py-2 text-sm whitespace-nowrap transition-colors xl:px-4",
                     active
                       ? "text-white"
                       : "text-white/70 hover:text-white",
@@ -93,7 +93,7 @@ export function Navbar({
             <Link href="/contact">Book a Consultation</Link>
           </Button>
           <button
-            className="text-white lg:hidden"
+            className="text-white xl:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
@@ -109,7 +109,7 @@ export function Navbar({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-border/80 bg-background/95 overflow-hidden border-b backdrop-blur-xl lg:hidden"
+            className="border-border/80 bg-background/95 overflow-hidden border-b backdrop-blur-xl xl:hidden"
           >
             <ul className="container-px mx-auto flex max-w-7xl flex-col gap-1 py-4">
               {items.map((item) => (
