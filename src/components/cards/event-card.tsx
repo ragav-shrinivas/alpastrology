@@ -1,24 +1,23 @@
-import Image from "next/image";
 import { Calendar, MapPin } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
+import { EditableImage } from "@/components/editor/editable-image";
 import type { EventItem } from "@/types/database";
 
 export function EventCard({ event }: { event: EventItem }) {
   return (
     <TiltCard className="flex h-full flex-col p-0">
       <div className="from-accent/15 to-primary/15 relative aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br">
-        {event.image_url ? (
-          <Image
-            src={event.image_url}
-            alt={event.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="bg-radial-glow absolute inset-0" />
-        )}
+        {!event.image_url && <div className="bg-radial-glow absolute inset-0" />}
+        <EditableImage
+          target={{ table: "events", rowId: event.id, column: "image_url" }}
+          url={event.image_url}
+          alt={event.title}
+          folder="Events"
+          fill
+          imgClassName="transition-transform duration-700 group-hover:scale-105"
+        />
         <Badge
           variant={event.status === "upcoming" ? "accent" : "muted"}
           className="absolute top-3 left-3 capitalize"

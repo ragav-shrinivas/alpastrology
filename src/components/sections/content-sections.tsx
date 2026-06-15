@@ -1,11 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Check, Star, Sparkles, PlayCircle } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { EditableText } from "@/components/editor/editable-text";
 import { EditableHtml } from "@/components/editor/editable-html";
+import { EditableImage } from "@/components/editor/editable-image";
 
 type Content = Record<string, unknown>;
 type Btn = { label: string; href: string; variant?: "primary" | "secondary" };
@@ -300,18 +300,18 @@ export function FounderSection({ content, sectionId }: Props) {
       <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
         <Reveal direction="right">
           <div className="from-primary/20 to-secondary/20 relative aspect-[4/5] overflow-hidden rounded-3xl bg-gradient-to-br">
-            {str(content, "image") ? (
-              <Image
-                src={str(content, "image")}
-                alt={str(content, "title")}
-                fill
-                className="object-cover"
-              />
-            ) : (
+            {!str(content, "image") && (
               <div className="bg-radial-glow absolute inset-0 flex items-center justify-center">
                 <Sparkles className="text-primary/40 size-16" />
               </div>
             )}
+            <EditableImage
+              target={{ sectionId, path: "image" }}
+              url={str(content, "image") || null}
+              alt={str(content, "title")}
+              folder="Consultants"
+              fill
+            />
           </div>
         </Reveal>
         <div>

@@ -1,24 +1,23 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Clock, Globe, ArrowRight } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Badge } from "@/components/ui/badge";
+import { EditableImage } from "@/components/editor/editable-image";
 import type { Course } from "@/types/database";
 
 export function CourseCard({ course }: { course: Course }) {
   return (
     <TiltCard className="flex h-full flex-col p-0">
       <div className="from-primary/20 to-secondary/20 relative aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br">
-        {course.image_url ? (
-          <Image
-            src={course.image_url}
-            alt={course.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="bg-radial-glow absolute inset-0" />
-        )}
+        {!course.image_url && <div className="bg-radial-glow absolute inset-0" />}
+        <EditableImage
+          target={{ table: "courses", rowId: course.id, column: "image_url" }}
+          url={course.image_url}
+          alt={course.title}
+          folder="Courses"
+          fill
+          imgClassName="transition-transform duration-700 group-hover:scale-105"
+        />
         {course.level && (
           <Badge className="absolute top-3 left-3 capitalize">
             {course.level}

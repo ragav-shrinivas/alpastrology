@@ -147,6 +147,37 @@ export async function saveSectionField(id: string, path: string, value: Json) {
   return { ok: true };
 }
 
+/** Record an uploaded asset in the media library table. */
+export async function recordMedia(input: {
+  url: string;
+  folder?: string;
+  title?: string;
+  type?: "image" | "video";
+}) {
+  const supabase = await staffClient();
+  const { error } = await supabase.from("media").insert({
+    url: input.url,
+    folder: input.folder ?? "General Assets",
+    title: input.title ?? null,
+    type: input.type ?? "image",
+  });
+  if (error) return { ok: false, error: error.message };
+  revalidateAll();
+  return { ok: true };
+}
+
+/** Save an image URL to a global setting (e.g. branding.logo). */
+export async function saveSettingValue(key: string, value: Json) {
+  const supabase = await staffClient();
+  const { error } = await supabase
+    .from("settings")
+    .update({ value })
+    .eq("key", key);
+  if (error) return { ok: false, error: error.message };
+  revalidateAll();
+  return { ok: true };
+}
+
 /** Update a single column on a collection row (courses, faq, testimonials, …). */
 export async function saveCollectionField(
   table: TableName,
