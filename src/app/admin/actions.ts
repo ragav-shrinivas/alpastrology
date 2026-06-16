@@ -15,6 +15,11 @@ async function staffClient() {
   return createClient();
 }
 
+// Shown when an update touches 0 rows — almost always an expired/missing staff
+// session (RLS silently blocks the write and returns no error).
+const NOT_SAVED =
+  "Not saved — your editor session may have expired. Reload the page and sign in again.";
+
 function revalidateAll() {
   // Public pages read with a short revalidate; refresh them after edits.
   revalidatePath("/", "layout");
@@ -138,11 +143,13 @@ export async function saveSectionField(id: string, path: string, value: Json) {
       : {}
   ) as Record<string, unknown>;
   setPath(content, path.split("."), value);
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("sections")
     .update({ content: content as Json })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id");
   if (error) return { ok: false, error: error.message };
+  if (!data || data.length === 0) return { ok: false, error: NOT_SAVED };
   revalidateAll();
   return { ok: true };
 }
@@ -169,11 +176,13 @@ export async function recordMedia(input: {
 /** Save an image URL to a global setting (e.g. branding.logo). */
 export async function saveSettingValue(key: string, value: Json) {
   const supabase = await staffClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("settings")
     .update({ value })
-    .eq("key", key);
+    .eq("key", key)
+    .select("key");
   if (error) return { ok: false, error: error.message };
+  if (!data || data.length === 0) return { ok: false, error: NOT_SAVED };
   revalidateAll();
   return { ok: true };
 }
@@ -187,8 +196,12 @@ export async function saveCollectionField(
 ) {
   const supabase = await staffClient();
   const from: AnyBuilder = supabase.from(table);
-  const { error } = await from.update({ [column]: value }).eq("id", id);
+  const { data, error } = await from
+    .update({ [column]: value })
+    .eq("id", id)
+    .select("id");
   if (error) return { ok: false, error: error.message };
+  if (!data || data.length === 0) return { ok: false, error: NOT_SAVED };
   revalidateAll();
   return { ok: true };
 }

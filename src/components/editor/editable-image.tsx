@@ -97,8 +97,10 @@ export function EditableImage({
   };
 
   const upload = async (file: File) => {
-    if (!ACCEPT.split(",").includes(file.type)) {
-      toast.error("Unsupported file type");
+    // Accept any image — browsers report odd MIME types (e.g. image/jpg) or an
+    // empty type for some files; don't reject those.
+    if (file.type && !file.type.startsWith("image/")) {
+      toast.error("Please choose an image file");
       return;
     }
     setBusy(true);
@@ -120,7 +122,12 @@ export function EditableImage({
       const ok = await saveUrl(publicUrl);
       if (ok) {
         setCurrent(publicUrl);
-        recordMedia({ url: publicUrl, folder, title: file.name, type: "image" });
+        await recordMedia({
+          url: publicUrl,
+          folder,
+          title: file.name,
+          type: "image",
+        });
         toast.success("Image updated", { duration: 900 });
       }
     } finally {

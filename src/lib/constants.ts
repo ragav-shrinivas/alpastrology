@@ -5,6 +5,10 @@ export const SITE_NAME = "ALP Astrology";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+/** Canonical business WhatsApp number — every enquiry/booking/contact CTA
+ *  routes here. Digits only; `whatsappLink()` adds the country code. */
+export const BUSINESS_WHATSAPP = "9840072167";
+
 /** Brand palette — single source of truth for canvas/WebGL colors. */
 export const COLORS = {
   primary: "#FF6A00",

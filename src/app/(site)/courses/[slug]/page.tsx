@@ -6,6 +6,8 @@ import { ArrowLeft, Clock, Globe, User, Check, FileDown } from "lucide-react";
 import { getCourseBySlug, getCourses } from "@/lib/cms/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { whatsappLink } from "@/lib/utils";
+import { BUSINESS_WHATSAPP } from "@/lib/constants";
 
 export const revalidate = 60;
 
@@ -113,7 +115,16 @@ export default async function CourseDetailPage({
               )}
             </dl>
             <Button asChild className="mt-6 w-full">
-              <Link href="/contact">Enroll / Enquire</Link>
+              <a
+                href={whatsappLink(
+                  BUSINESS_WHATSAPP,
+                  `Hello ALP Astrology, I'd like to enroll / enquire about the course "${course.title}".`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Enroll / Enquire
+              </a>
             </Button>
             {course.pdf_url && (
               <Button asChild variant="secondary" className="mt-3 w-full">

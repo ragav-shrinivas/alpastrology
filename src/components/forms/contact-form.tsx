@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { contactSchema, type ContactInput } from "@/lib/validations";
 import { submitContact } from "@/app/(site)/contact/actions";
+import { whatsappLink } from "@/lib/utils";
+import { BUSINESS_WHATSAPP } from "@/lib/constants";
 
 export function ContactForm() {
   const [pending, startTransition] = useTransition();
@@ -22,15 +24,35 @@ export function ContactForm() {
   } = useForm<ContactInput>({ resolver: zodResolver(contactSchema) });
 
   function onSubmit(values: ContactInput) {
+    // Open WhatsApp immediately while still inside the click gesture so the
+    // browser doesn't block the new tab as a pop-up.
+    const message = [
+      "Hello ALP Astrology, I'd like to get in touch.",
+      "",
+      `Name: ${values.name}`,
+      values.email ? `Email: ${values.email}` : null,
+      values.phone ? `Phone: ${values.phone}` : null,
+      values.subject ? `Subject: ${values.subject}` : null,
+      "",
+      values.message,
+    ]
+      .filter((l) => l !== null)
+      .join("\n");
+    // Save a backup copy to the admin inbox (non-blocking — never lose a lead).
     startTransition(async () => {
-      const res = await submitContact(values);
-      if (res.ok) {
-        toast.success("Message sent! We'll be in touch soon.");
-        reset();
-      } else {
-        toast.error(res.error ?? "Something went wrong.");
-      }
+      await submitContact(values).catch(() => {});
     });
+
+    // react-hook-form validates async, so we're past the original click
+    // gesture and a new tab may be pop-up blocked — fall back to same-tab.
+    const url = whatsappLink(BUSINESS_WHATSAPP, message);
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) {
+      window.location.assign(url);
+      return;
+    }
+    toast.success("Opening WhatsApp to send your message…");
+    reset();
   }
 
   return (

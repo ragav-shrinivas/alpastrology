@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { whatsappLink } from "@/lib/utils";
+import { BUSINESS_WHATSAPP } from "@/lib/constants";
 
 const MODES = ["Online", "Physical"];
 const SERVICES = [
@@ -40,29 +42,43 @@ export function AppointmentForm() {
     }
     const message = [
       "Consultation appointment request",
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      email ? `Email: ${email}` : null,
       `Date: ${fd.get("date") || "-"}`,
       `Time: ${fd.get("time") || "-"}`,
       `City/Country: ${fd.get("city") || "-"}`,
       `Mode: ${fd.get("mode") || "-"}`,
       `Services: ${services.join(", ") || "-"}`,
-    ].join("\n");
+    ]
+      .filter((l) => l !== null)
+      .join("\n");
 
     setSubmitting(true);
+    // Open WhatsApp now (still inside the click gesture) so it isn't blocked;
+    // fall back to same-tab navigation if a pop-up blocker stops the new tab.
+    const url = whatsappLink(BUSINESS_WHATSAPP, message);
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+
+    // Backup copy to the admin inbox — non-blocking; never lose a lead.
     const supabase = createClient();
-    const { error } = await supabase.from("contacts").insert({
-      name,
-      phone,
-      email: email || null,
-      subject: "Consultation Appointment",
-      message,
-    });
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
+    void supabase
+      .from("contacts")
+      .insert({
+        name,
+        phone,
+        email: email || null,
+        subject: "Consultation Appointment",
+        message,
+      })
+      .then(() => {}, () => {});
+
+    if (!win) {
+      window.location.assign(url);
       return;
     }
     setDone(true);
-    toast.success("Appointment request sent");
+    toast.success("Opening WhatsApp to confirm your appointment…");
   }
 
   if (done) {
