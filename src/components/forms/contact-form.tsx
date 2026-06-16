@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { contactSchema, type ContactInput } from "@/lib/validations";
 import { submitContact } from "@/app/(site)/contact/actions";
-import { whatsappLink } from "@/lib/utils";
+import { whatsappLink, generateWhatsAppMessage } from "@/lib/utils";
 import { BUSINESS_WHATSAPP } from "@/lib/constants";
 
 export function ContactForm() {
@@ -24,34 +24,26 @@ export function ContactForm() {
   } = useForm<ContactInput>({ resolver: zodResolver(contactSchema) });
 
   function onSubmit(values: ContactInput) {
-    // Open WhatsApp immediately while still inside the click gesture so the
-    // browser doesn't block the new tab as a pop-up.
-    const message = [
-      "Hello ALP Astrology, I'd like to get in touch.",
-      "",
-      `Name: ${values.name}`,
-      values.email ? `Email: ${values.email}` : null,
-      values.phone ? `Phone: ${values.phone}` : null,
-      values.subject ? `Subject: ${values.subject}` : null,
-      "",
-      values.message,
-    ]
-      .filter((l) => l !== null)
-      .join("\n");
+    // Build the WhatsApp body from the actual form values, then encode it.
+    const url = whatsappLink(
+      BUSINESS_WHATSAPP,
+      generateWhatsAppMessage(values),
+    );
+
     // Save a backup copy to the admin inbox (non-blocking — never lose a lead).
     startTransition(async () => {
       await submitContact(values).catch(() => {});
     });
 
     // react-hook-form validates async, so we're past the original click
-    // gesture and a new tab may be pop-up blocked — fall back to same-tab.
-    const url = whatsappLink(BUSINESS_WHATSAPP, message);
+    // gesture and a new tab may be pop-up blocked — fall back to same-tab
+    // navigation, which always carries the prefilled ?text= through.
     const win = window.open(url, "_blank", "noopener,noreferrer");
     if (!win) {
       window.location.assign(url);
       return;
     }
-    toast.success("Opening WhatsApp to send your message…");
+    toast.success("Opening WhatsApp with your message…");
     reset();
   }
 
@@ -86,6 +78,11 @@ export function ContactForm() {
         <div>
           <Label htmlFor="phone">Phone</Label>
           <Input id="phone" placeholder="Phone number" {...register("phone")} />
+          {errors.phone && (
+            <p className="text-secondary-500 mt-1 text-xs">
+              {errors.phone.message}
+            </p>
+          )}
         </div>
         <div>
           <Label htmlFor="subject">Subject</Label>

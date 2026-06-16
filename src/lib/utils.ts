@@ -34,10 +34,45 @@ export function stripHtml(html: string | null | undefined, max = 160): string {
   return text.length > max ? `${text.slice(0, max).trim()}…` : text;
 }
 
-/** Build a wa.me link from a phone/whatsapp number. */
+/** Build a wa.me link from a phone/whatsapp number.
+ *  `encodeURIComponent` correctly percent-encodes spaces, line breaks (%0A),
+ *  punctuation, Tamil/Unicode characters and emoji for the wa.me `text` param. */
 export function whatsappLink(number: string, message?: string): string {
   const clean = number.replace(/[^\d]/g, "");
   const withCc = clean.length === 10 ? `91${clean}` : clean;
   const q = message ? `?text=${encodeURIComponent(message)}` : "";
   return `https://wa.me/${withCc}${q}`;
+}
+
+/** Build the WhatsApp enquiry body from contact-form fields. Reusable across
+ *  every WhatsApp CTA so the wording stays consistent. Optional fields are
+ *  omitted when empty rather than rendered blank. */
+export function generateWhatsAppMessage(fields: {
+  name: string;
+  phone: string;
+  message: string;
+  email?: string;
+  subject?: string;
+}): string {
+  const v = (s?: string) => (s ?? "").trim();
+  const parts: string[] = [
+    "Hello ALP Astrology,",
+    "",
+    "I would like to get in touch.",
+    "",
+    `Name: ${v(fields.name)}`,
+  ];
+  if (v(fields.email)) parts.push("", `Email: ${v(fields.email)}`);
+  if (v(fields.phone)) parts.push("", `Phone: ${v(fields.phone)}`);
+  if (v(fields.subject)) parts.push("", `Subject: ${v(fields.subject)}`);
+  parts.push(
+    "",
+    "Message:",
+    v(fields.message),
+    "",
+    "Please contact me.",
+    "",
+    "Thank you.",
+  );
+  return parts.join("\n");
 }
