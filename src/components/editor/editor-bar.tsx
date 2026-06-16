@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Monitor, Tablet, Smartphone, Pencil, Check, Loader2, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
+import { Monitor, Tablet, Smartphone, Check, Loader2, LayoutDashboard } from "lucide-react";
 import { useEditor, type Device } from "@/lib/editor/store";
 
 const DEVICES: { id: Device; icon: React.ReactNode; label: string }[] = [
@@ -24,9 +25,11 @@ export function EditorBar() {
     return (
       <button
         onClick={() => setEditing(true)}
-        className="fixed bottom-6 left-1/2 z-[100] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#e8b54a]/40 bg-[#0e1330]/90 px-5 py-2.5 text-sm font-semibold text-[#ffe9ad] shadow-[0_8px_30px_-6px_rgba(232,181,74,.5)] backdrop-blur-md transition hover:bg-[#1a1f44]"
+        aria-label="Site management"
+        title="Site management"
+        className="fixed bottom-3 right-3 z-[100] flex size-9 items-center justify-center rounded-full opacity-25 transition-opacity duration-300 hover:opacity-70"
       >
-        <Pencil className="size-4" /> Edit site
+        <Image src="/evo9.png" alt="" width={28} height={28} className="object-contain" />
       </button>
     );
   }
