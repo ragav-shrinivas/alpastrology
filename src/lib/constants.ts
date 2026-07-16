@@ -9,6 +9,17 @@ export const SITE_URL =
  *  routes here. Digits only; `whatsappLink()` adds the country code. */
 export const BUSINESS_WHATSAPP = "9840072167";
 
+/** Google Maps place link for the ALP office, used when `contact.map_embed`
+ *  is empty. Share links like this one can't be framed — Google sends
+ *  X-Frame-Options: SAMEORIGIN — so the contact map is a still image that
+ *  links out rather than an <iframe>. */
+export const DEFAULT_MAP_URL = "https://maps.app.goo.gl/Mcxk5HgdkU65xEHv6?g_st=aw";
+
+/** Shown until a staff member uploads their own image to `contact.map_image`.
+ *  Rendered from OpenStreetMap tiles (© OpenStreetMap contributors, ODbL);
+ *  the attribution is baked into the bottom-right of the image. */
+export const DEFAULT_MAP_IMAGE = "/contact-map.png";
+
 /** Brand palette — single source of truth for canvas/WebGL colors. */
 export const COLORS = {
   primary: "#FF6A00",

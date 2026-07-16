@@ -4,7 +4,9 @@ import { Instagram, Facebook } from "@/components/icons/social";
 import { getPageSections, getSettings } from "@/lib/cms/content";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import { ContactForm } from "@/components/forms/contact-form";
+import { EditableImage } from "@/components/editor/editable-image";
 import { whatsappLink } from "@/lib/utils";
+import { DEFAULT_MAP_IMAGE, DEFAULT_MAP_URL } from "@/lib/constants";
 
 export const revalidate = 60;
 export const metadata: Metadata = { title: "Contact" };
@@ -19,9 +21,20 @@ export default async function ContactPage() {
   const email = settings.get("contact.email", "");
   const whatsapp = settings.get("contact.whatsapp", "");
   const address = settings.get("contact.address", "");
-  const mapEmbed = settings.get("contact.map_embed", "");
   const instagram = settings.get("social.instagram", "");
   const facebook = settings.get("social.facebook", "");
+
+  // `contact.map_embed` predates this box being an image and is labelled
+  // "Embed URL", so an editor may legitimately have pasted a /maps/embed?pb=
+  // URL in there. That renders as a bare tile viewer when opened as a link,
+  // so only honour values that work as a destination.
+  const savedMapUrl = settings.get<string>("contact.map_embed", "");
+  const mapUrl =
+    savedMapUrl && !savedMapUrl.includes("/maps/embed")
+      ? savedMapUrl
+      : DEFAULT_MAP_URL;
+  const mapImage =
+    settings.get<string>("contact.map_image", "") || DEFAULT_MAP_IMAGE;
 
   return (
     <>
@@ -90,19 +103,27 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {mapEmbed && (
-              <div className="border-border overflow-hidden rounded-2xl border">
-                <iframe
-                  src={mapEmbed}
-                  width="100%"
-                  height="260"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Map"
-                />
-              </div>
-            )}
+            <a
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open our location in Google Maps"
+              className="border-border hover:border-primary/60 group relative block h-[260px] overflow-hidden rounded-2xl border transition-colors"
+            >
+              <EditableImage
+                target={{ settingKey: "contact.map_image" }}
+                url={mapImage}
+                alt={address ? `Map to ${address}` : "Map to the ALP office"}
+                folder="Contact"
+                fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                imgClassName="transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+              <span className="pointer-events-none absolute right-3 bottom-3 flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+                <MapPin className="size-3.5" />
+                Open in Google Maps
+              </span>
+            </a>
           </div>
 
           {/* Form */}

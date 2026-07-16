@@ -34,6 +34,7 @@ insert into public.settings (key, value, "group", label, type) values
   ('contact.whatsapp',  to_jsonb('9840072167'::text), 'contact', 'WhatsApp', 'text'),
   ('contact.address',   to_jsonb('F2, 1st Floor, Shiva Homes, Jayalakshmi Nagar, Anandha Sayanam, Moulivakkam, Chennai, Tamil Nadu, India, 600116'::text), 'contact', 'Address', 'textarea'),
   ('contact.map_embed', to_jsonb(''::text), 'contact', 'Google Map Embed URL', 'url'),
+  ('contact.map_image', to_jsonb(''::text), 'contact', 'Location Map Image', 'url'),
   ('social.instagram',  to_jsonb('https://www.instagram.com/santhakumarvelayutham/'::text), 'social', 'Instagram', 'url'),
   ('social.facebook',   to_jsonb('https://www.facebook.com/p/ALP-SRI-GURU-Santhakumar-61559910637136/'::text), 'social', 'Facebook', 'url'),
   ('social.youtube',    to_jsonb(''::text), 'social', 'YouTube', 'url')
