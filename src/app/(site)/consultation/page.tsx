@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { getPageSections } from "@/lib/cms/content";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import { AppointmentForm } from "@/components/forms/appointment-form";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export const revalidate = 60;
-export const metadata: Metadata = { title: "Consultation" };
+export const metadata: Metadata = pageMetadata({
+  path: "/consultation",
+  title: "Consultation",
+  description:
+    "Book a personal astrology consultation with ALP for clarity on career, marriage, health and timing — authentic Vedic analysis with practical guidance.",
+});
 
 export default async function ConsultationPage() {
   const sections = await getPageSections("consultation");

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getBlogBySlug, getBlogs } from "@/lib/cms/content";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -20,17 +21,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlogBySlug(slug);
-  if (!blog) return { title: "Article not found" };
-  return {
+  if (!blog) return { title: "Article not found", robots: { index: false } };
+  return pageMetadata({
+    path: `/blog/${blog.slug}`,
     title: blog.meta_title || blog.title,
-    description: blog.meta_description || blog.excerpt || undefined,
-    openGraph: {
-      title: blog.title,
-      description: blog.excerpt || undefined,
-      images: blog.featured_image ? [blog.featured_image] : undefined,
-      type: "article",
-    },
-  };
+    description:
+      blog.meta_description ||
+      blog.excerpt ||
+      `${blog.title} — an article on Vedic astrology and Akshaya Lagna Paddhati from ALP Astrology.`,
+    image: blog.featured_image,
+    type: "article",
+  });
 }
 
 export default async function BlogDetailPage({

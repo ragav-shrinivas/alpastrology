@@ -37,6 +37,7 @@ export default async function SiteLayout({
           settings.get("social.youtube", ""),
         ]}
         phone={settings.get("contact.phone", "") || undefined}
+        email={settings.get("contact.email", "") || undefined}
         address={settings.get("contact.address", "") || undefined}
       />
       <Navbar items={navItems} logoText={logoText} logoUrl={logoUrl || undefined} />

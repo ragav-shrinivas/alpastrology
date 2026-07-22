@@ -2,8 +2,47 @@
 
 export const SITE_NAME = "ALP Astrology";
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+/**
+ * Canonical, indexable production origin — the branded custom domain, NOT the
+ * `*.vercel.app` deployment alias. This is the single source of truth for every
+ * absolute URL on the site (canonical tags, Open Graph, Twitter, sitemap,
+ * robots, JSON-LD). Pointing these at the vercel.app alias would split ranking
+ * signals and let the alias get indexed instead of the brand domain.
+ *
+ * Resolution order:
+ *  1. `NEXT_PUBLIC_SITE_URL` — honoured only when it is NOT a `*.vercel.app`
+ *     alias, so a stale alias value can never become the canonical host.
+ *  2. Vercel production build → the branded domain below.
+ *  3. Vercel preview build → that deployment's own URL.
+ *  4. Local dev → localhost.
+ *
+ * The apex (alpastrosanthakumar.com) 308-redirects to www, so www is the final,
+ * canonical host.
+ */
+export const PRODUCTION_ORIGIN = "https://www.alpastrosanthakumar.com";
+
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+  if (explicit) {
+    let host = "";
+    try {
+      host = new URL(explicit).hostname;
+    } catch {
+      /* malformed value → ignore and fall through */
+    }
+    if (host && !/\.vercel\.app$/i.test(host)) return explicit;
+  }
+  if (process.env.VERCEL_ENV === "production") return PRODUCTION_ORIGIN;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
+export const SITE_URL = resolveSiteUrl();
+
+/** Default social-share image (1200×630). Used for og:image / twitter:image
+ *  when neither the CMS `seo.og_image` nor a row's own image is set. Kept as a
+ *  root-relative path so `metadataBase` resolves it to an absolute URL. */
+export const OG_IMAGE_PATH = "/og-image.png";
 
 /** Canonical business WhatsApp number — every enquiry/booking/contact CTA
  *  routes here. Digits only; `whatsappLink()` adds the country code. */

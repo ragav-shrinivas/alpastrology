@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, Globe, User, Check, FileDown } from "lucide-react";
 import { getCourseBySlug, getCourses } from "@/lib/cms/content";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { whatsappLink } from "@/lib/utils";
@@ -23,9 +24,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
-  return course
-    ? { title: course.title, description: course.description ?? undefined }
-    : { title: "Course not found" };
+  if (!course) return { title: "Course not found", robots: { index: false } };
+  return pageMetadata({
+    path: `/courses/${course.slug}`,
+    title: course.title,
+    description:
+      course.description ||
+      `${course.title} — a structured astrology course from ALP teaching Akshaya Lagna Paddhati and Vedic astrology.`,
+    image: course.image_url,
+  });
 }
 
 export default async function CourseDetailPage({

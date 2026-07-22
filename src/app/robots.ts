@@ -6,8 +6,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/admin/"],
+      // Keep admin, the hidden entry, auth and API endpoints out of the index.
+      disallow: ["/admin", "/admin/", "/godmode", "/api/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

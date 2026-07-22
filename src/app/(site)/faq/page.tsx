@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { getPageSections, getFaqs } from "@/lib/cms/content";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import {
@@ -9,7 +10,12 @@ import {
 } from "@/components/ui/accordion";
 
 export const revalidate = 60;
-export const metadata: Metadata = { title: "FAQ" };
+export const metadata: Metadata = pageMetadata({
+  path: "/faq",
+  title: "FAQ",
+  description:
+    "Answers to common questions about ALP Astrology courses, consultations, fees, certification and how Akshaya Lagna Paddhati works — find what you need here.",
+});
 
 export default async function FaqPage() {
   const [sections, faqs] = await Promise.all([

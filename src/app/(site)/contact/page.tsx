@@ -5,11 +5,17 @@ import { getPageSections, getSettings } from "@/lib/cms/content";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import { ContactForm } from "@/components/forms/contact-form";
 import { EditableImage } from "@/components/editor/editable-image";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { whatsappLink } from "@/lib/utils";
 import { DEFAULT_MAP_IMAGE, DEFAULT_MAP_URL } from "@/lib/constants";
 
 export const revalidate = 60;
-export const metadata: Metadata = { title: "Contact" };
+export const metadata: Metadata = pageMetadata({
+  path: "/contact",
+  title: "Contact",
+  description:
+    "Contact ALP Astrology for consultations, courses and astrology software. Reach our office by phone, WhatsApp or email, or send us a message online.",
+});
 
 export default async function ContactPage() {
   const [sections, settings] = await Promise.all([

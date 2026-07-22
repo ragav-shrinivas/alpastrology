@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { getPageSections, getBlogs } from "@/lib/cms/content";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import { BlogCard } from "@/components/cards/blog-card";
 import { StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 
 export const revalidate = 60;
-export const metadata: Metadata = { title: "Blog" };
+export const metadata: Metadata = pageMetadata({
+  path: "/blog",
+  title: "Blog",
+  description:
+    "Read ALP Astrology articles on Vedic astrology, Akshaya Lagna Paddhati, remedies and predictive techniques — practical insights for students and seekers.",
+});
 
 export default async function BlogPage() {
   const [sections, blogs] = await Promise.all([
